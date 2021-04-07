@@ -24,11 +24,11 @@ public class FlinkReduce {
                 String[] split = line.split(",");
                 collector.collect(new WaterSensor(split[0], Long.valueOf(split[1]), Integer.valueOf(split[2])));
             }
-        }).keyBy(WaterSensor::getName)
+        }).keyBy(WaterSensor::getId)
                 .reduce(new ReduceFunction<WaterSensor>() {
                     @Override
                     public WaterSensor reduce(WaterSensor w1, WaterSensor w2) throws Exception {
-                        return new WaterSensor(w1.getName(), w2.getTs(), w1.getVc() + w2.getVc());
+                        return new WaterSensor(w1.getId(), w2.getTs(), w1.getVc() + w2.getVc());
                     }
                 }).print();
 

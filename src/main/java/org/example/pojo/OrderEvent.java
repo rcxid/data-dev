@@ -8,14 +8,15 @@ import lombok.ToString;
 /**
  * @author vision
  * @version 1.0
- * @date 2021/4/4 14:07
+ * @date 2021/4/6 20:05
  */
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class WaterSensor {
-    private String id;
-    private Long ts;
-    private Integer vc;
+public class OrderEvent {
+    private Long orderId;
+    private String eventType;
+    private String txId;
+    private Long eventTime;
 }

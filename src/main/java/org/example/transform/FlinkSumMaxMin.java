@@ -29,7 +29,7 @@ public class FlinkSumMaxMin {
         KeyedStream<WaterSensor, String> sensor = source.keyBy(new KeySelector<WaterSensor, String>() {
             @Override
             public String getKey(WaterSensor waterSensor) throws Exception {
-                return waterSensor.getName();
+                return waterSensor.getId();
             }
         });
 
