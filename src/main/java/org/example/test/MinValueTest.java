@@ -8,5 +8,6 @@ package org.example.test;
 public class MinValueTest {
     public static void main(String[] args) {
         System.out.println(Long.MIN_VALUE);
+        System.out.println(System.currentTimeMillis() - Long.MIN_VALUE);
     }
 }
