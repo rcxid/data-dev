@@ -4,7 +4,6 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.example.pojo.WaterSensor;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;

@@ -45,6 +45,9 @@ public class WaterSensorWarning {
                     long timerTimestamp;
                     @Override
                     public void processElement(WaterSensor value, Context ctx, Collector<String> out) throws Exception {
+                        System.out.println(ctx.getClass().getName());
+                        System.out.println(ctx.timerService().getClass().getTypeName());
+                        System.out.println(value.getTs() + " " + ctx.timestamp() + " " + ctx.timerService().currentWatermark());
                         if (!timerExist) {
                             System.out.println("定时器不存在，创建定时器");
                             timerExist = true;

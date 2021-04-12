@@ -2,6 +2,7 @@ package org.example.timer;
 
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.streaming.api.TimerService;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
@@ -31,9 +32,12 @@ public class EventTimeTimer {
                 .process(new KeyedProcessFunction<String, WaterSensor, String>() {
                     @Override
                     public void processElement(WaterSensor value, Context ctx, Collector<String> out) throws Exception {
+                        System.out.println(ctx.timerService().getClass().getName());
                         if ("sensor_1".equals(value.getId())) {
                             System.out.println("创建定时器");
-                            ctx.timerService().registerEventTimeTimer(ctx.timerService().currentWatermark() + 5000);
+                            TimerService timerService = ctx.timerService();
+                            timerService.currentWatermark();
+                            ctx.timerService().registerEventTimeTimer(ctx.timestamp() + 5000);
                         }
                     }
 

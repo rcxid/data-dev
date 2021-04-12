@@ -1,19 +1,25 @@
 package org.example.demand;
 
+import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 import org.example.pojo.UserBehavior;
+
+import java.time.Duration;
 
 /**
  * @author vision
  * @version 1.0
  * @date 2021/4/6 19:02
  */
-public class PageView {
+public class PageViewWithWindow {
     public static void main(String[] args) {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -36,13 +42,22 @@ public class PageView {
                 }
             }
         })
+                .assignTimestampsAndWatermarks(WatermarkStrategy.
+                        <UserBehavior>forBoundedOutOfOrderness(Duration.ofSeconds(5))
+                .withTimestampAssigner(new SerializableTimestampAssigner<UserBehavior>() {
+                    @Override
+                    public long extractTimestamp(UserBehavior element, long recordTimestamp) {
+                        return element.getTimestamp() * 1000;
+                    }
+                }))
                 .map(new MapFunction<UserBehavior, Tuple2<String, Long>>() {
                     @Override
                     public Tuple2<String, Long> map(UserBehavior userBehavior) throws Exception {
-                        return Tuple2.of("pv", 1L);
+                        return Tuple2.of(pageView, 1L);
                     }
                 })
                 .keyBy(t -> t.f0)
+                .window(TumblingEventTimeWindows.of(Time.seconds(60)))
                 .sum(1)
                 .print();
 

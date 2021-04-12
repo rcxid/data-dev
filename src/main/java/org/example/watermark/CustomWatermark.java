@@ -96,6 +96,7 @@ class CustomWatermarkGenerator implements WatermarkGenerator<WaterSensor> {
         if (event.getTs() > maxTimestamp) {
             System.out.println("update maxTimestamp and watermark");
             maxTimestamp = event.getTs();
+            System.out.println(output.getClass().getName());
             output.emitWatermark(new Watermark(maxTimestamp - outOfOrdernessMillis - 1));
             System.out.println("watermark: " + (maxTimestamp - outOfOrdernessMillis - 1));
         }
