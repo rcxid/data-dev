@@ -15,6 +15,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
+import java.time.Duration;
+
 
 /**
  * @author rcxid
@@ -38,7 +40,7 @@ public class TestWindowProcessFunction {
                 out.collect(Tuple2.of(split[0], Long.valueOf(split[1])));
             }
         }).assignTimestampsAndWatermarks(WatermarkStrategy
-                .<Tuple2<String, Long>>forMonotonousTimestamps()
+                .<Tuple2<String, Long>>forBoundedOutOfOrderness(Duration.ofSeconds(2))
                 .withTimestampAssigner(new SerializableTimestampAssigner<Tuple2<String, Long>>() {
                     @Override
                     public long extractTimestamp(Tuple2<String, Long> element, long recordTimestamp) {
@@ -62,6 +64,11 @@ public class TestWindowProcessFunction {
                             key.update(s);
                         }
                         System.out.println(s + ": " + s.equals(key.value()));
+                        StringBuilder builder = new StringBuilder();
+                        for (Tuple2<String, Long> element : elements) {
+                            builder.append(element.f0).append(": ").append(element.f1).append(",");
+                        }
+                        out.collect(builder.toString());
                     }
                 }).print();
 
